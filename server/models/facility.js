@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { url } = require("../utils/cloudinary");
 
 const facilitySchema = new mongoose.Schema(
     {
@@ -27,8 +28,14 @@ const facilitySchema = new mongoose.Schema(
             required:true,
         },
         image:{
-            type: [String],
-            required:false,
+            public_id:{
+                type:String,
+                required:true,
+            },
+            url:{
+                type:String,
+                required:true,
+            },
         },
         reserved:[
             {

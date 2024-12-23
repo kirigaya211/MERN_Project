@@ -4,16 +4,19 @@ const facilityController = require("../controllers/facilityController");
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 const multer = require("multer");
+const cloudinary = require("../utils/cloudinary");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads/"); 
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); 
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "uploads", 
+    allowed_formats: ["jpeg", "png", "jpg"], 
   },
 });
+
 const upload = multer({ storage });
 
 

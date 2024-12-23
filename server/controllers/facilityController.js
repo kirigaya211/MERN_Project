@@ -1,10 +1,21 @@
 const Facility = require("../models/facility");
 const dotenv = require("dotenv");
 dotenv.config();
+const cloudinary = require("../utils/cloudinary");
 
 const addFacility = async (req, res, next) => {
+  const { name, description, location, capacity, price } = req.body;
   try {
-    const { name, description, location, capacity, price } = req.body;
+    try {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: "facilities",
+        allowed_formats: ["jpeg", "png", "jpg"],
+      });
+    } catch (error) {
+      console.error('Cloudinary upload error:', error); // Log the error
+      return res.status(500).json({ error: 'Failed to upload image to Cloudinary' });
+    }
+    
 
     const existFacility = await Facility.findOne({ name });
     if (existFacility) {
@@ -17,7 +28,10 @@ const addFacility = async (req, res, next) => {
       location,
       capacity,
       price,
-      image: req.file ? req.file.path : null,
+      image: {
+        url: result.secure_url,
+        public_id: result.public_id,
+      },
     });
 
     await facility.save();
